@@ -12,11 +12,20 @@
     </style>
 </head>
 <body>
-	<div id="webgl"></div>
-	<script src="js/three.min.js"></script>
-    <script src="js/Detector.js"></script>	
-	<script src="js/TrackballControls.js"></script>
-	<script src="js/Tween.min.js"></script> 		
-	<script src="js/entrypoint.js"></script> 
+	<div id="webgl">
+	</div>
+	
+	<!--Libraries-->
+	<script src="vendor/three.min.js"></script>
+    <script src="vendor/Detector.js"></script>	
+	<script src="vendor/TrackballControls.js"></script>
+	<script src="vendor/Tween.min.js"></script>
+	
+	
+	<!--Main code-->
+	<script src="js/texturehandler.js"></script>
+	<script src="js/geomhandler.js"></script>
+	<script src="js/entrypoint.js"></script>
+	<script>init()</script> 
 </body>
 </html>
