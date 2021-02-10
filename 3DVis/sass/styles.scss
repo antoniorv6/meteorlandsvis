@@ -1,6 +1,6 @@
 $gray: rgb(255, 255, 255);
-$blue: rgb(120, 200, 255);
-$dark-blue: rgb(120, 200, 255);
+$blue: rgb(66, 75, 172);
+$dark-blue: rgb(1, 10, 45);
 $green: rgb(100, 200, 100);
 $red: rgb(255, 120, 120);
 $dark-red: rgb(120, 0, 0);
@@ -13,9 +13,9 @@ $yellow: rgb(255, 200, 0);
   $font-stack: 'Exo 2', Arial, sans-serif;
   $font-size: 14px;
   $base-color: $gray;
-  $background-color: rgba($dark-blue, .2);
+  $background-color: rgba($dark-blue, .7);
   $border-color: rgba($base-color, .2);
-  $text-color: rgba($base-color, .8);
+  $text-color: rgba($base-color, 1);
   box-sizing: border-box;
   display: inline-block;
   font: normal 100 #{$font-size}/1.2em $font-stack;
@@ -24,6 +24,7 @@ $yellow: rgb(255, 200, 0);
   border: 1px solid $border-color;
   color: $text-color;
   padding: 0 1em 1em;
+  min-width: 250px;
 
   .futurepanel__header {
     box-sizing: border-box;
@@ -41,7 +42,7 @@ $yellow: rgb(255, 200, 0);
   }
   .futurepanel__body {
     box-sizing: border-box;
-    padding: 1em;
+    padding: .5em;
   }
   .futurepanel__divider {
     box-sizing: border-box;
@@ -143,6 +144,36 @@ $yellow: rgb(255, 200, 0);
   $border-color: rgba($base-color, .2);
   $text-color: rgba($gray, .8);
   font: normal 300 #{$font-size}/1.2em $font-stack;
+  width: 100%;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: $text-color;
+  margin: 1px; 
+  padding: .4em 1em;
+  border: 1px solid $border-color;
+  background-color: $background-color;
+  cursor: pointer;
+  &:hover {
+    background-color: rgba($base-color, .4);
+    color: rgba($gray, .6);
+  }
+  &[disabled] {
+    background-color: rgba($base-color, .2);
+    border: 1px solid rgba($base-color, .1);
+    color: rgba($gray, .3);
+    cursor: not-allowed;
+  }  
+}
+
+.futurebutton_arrow {
+  $font-stack: 'Exo 2', Arial, sans-serif;
+  $font-size: 14px;
+  $base-color: $blue;
+  $background-color: rgba($base-color, .6);
+  $border-color: rgba($base-color, .2);
+  $text-color: rgba($gray, .8);
+  font: normal 300 #{$font-size}/1.2em $font-stack;
+  width: 48%;
   text-transform: uppercase;
   letter-spacing: .06em;
   color: $text-color;
@@ -167,6 +198,7 @@ $yellow: rgb(255, 200, 0);
   background-color: rgba($dark-red, .9);
   border: 1px solid rgba($red, .4);
   color: rgba($gray, .8);
+  width: 100%;
   &:hover {
     background-color: rgba($dark-red, .9);
     color: rgba($gray, .8);
@@ -183,7 +215,7 @@ $yellow: rgb(255, 200, 0);
   $font-size: 14px;
   $base-color: $blue;
   $border-color: rgba($base-color, .4);
-  $text-color: rgba($blue, .8);
+  $text-color: rgba($gray, .8);
   
   font: normal 300 #{$font-size}/1.2em $font-stack;
   box-sizing: border-box;

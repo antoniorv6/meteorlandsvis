@@ -46,13 +46,12 @@ function init()
   load_dataset();
 }
 
-function changeIndex()
+function changeIndex(id)
 {
-  highlight_meteor += 1;
-  setNewHighlight(meteor_data[highlight_meteor].reclat, 
-    meteor_data[highlight_meteor].reclong)
-  console.log(meteor_data[highlight_meteor].reclat);
-  console.log(meteor_data[highlight_meteor].reclong)
+  highlight_meteor = id;
+  setNewHighlight(meteors_shown[highlight_meteor].reclat, 
+    meteors_shown[highlight_meteor].reclong)
+  setMeteorInfo(id);
 }
 
 function setNewHighlight(latitude, longitude)
@@ -62,6 +61,10 @@ function setNewHighlight(latitude, longitude)
   camX = radius * Math.cos(latRad) * Math.cos(lonRad);
   camY = radius * Math.sin(latRad);
   camZ = radius * Math.cos(latRad) * Math.sin(lonRad);
+
+  x = camera.position.x;
+  y = camera.position.y;
+  z = camera.position.z;
 
   runTweenCam();
 
@@ -76,9 +79,6 @@ function scaleValue(value, from, to) {
 
 function init_graphics()
 {
-  setNewHighlight(meteor_data[highlight_meteor].reclat, 
-                  meteor_data[highlight_meteor].reclong)
-
   if (!Detector.webgl) 
   {
 	  Detector.addGetWebGLMessage(webglEl);
@@ -93,6 +93,10 @@ function init_graphics()
   setCameras()
   addLights();
   createSphereGeometry();
+
+  setNewHighlight(meteor_data[highlight_meteor].reclat, 
+    meteor_data[highlight_meteor].reclong)
+
 	//const axesHelper = new THREE.AxesHelper( 5 );
 	//scene.add( axesHelper );
   webglEl.appendChild(renderer.domElement);
@@ -104,7 +108,7 @@ function init_graphics()
 function setCameras()
 {
   camera = new THREE.PerspectiveCamera(45, width / height, 0.01, 1000);
-  camera.position.z = 1.5;
+  camera.position.z = 0.9;
   controls = new THREE.TrackballControls(camera);
   sphereCamera = new THREE.CubeCamera(1,1000,500);
   sphereCamera.position.set(0,1,0);
@@ -166,7 +170,7 @@ function runTween()
 
 function runTweenCam()
 {
-  tween2 = new TWEEN.Tween({x, y, z}).to({x: camX, y: camY, z: camZ}, 3000)
+  tween2 = new TWEEN.Tween({x, y, z}).to({x: camX, y: camY, z: camZ}, 3000).easing(TWEEN.Easing.Quadratic.Out)
   .onUpdate(val=>{x = val.x, y= val.y, z=val.z})
   .onComplete((val)=>{animating=false});
   tween2.start();
