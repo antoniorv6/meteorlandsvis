@@ -9,13 +9,24 @@ var radius   = 0.5,
 	segments = 64,
 	rotation = 0;  
 
-let lat = 9.533330;
-let lon = 39.716670;
-let latRad = lat * (Math.PI / 180);
-let lonRad = -lon * (Math.PI / 180);
-let x = radius * Math.cos(latRad) * Math.cos(lonRad);
-let y = radius * Math.sin(latRad);
-let z = radius * Math.cos(latRad) * Math.sin(lonRad);
+let x = 0//radius * Math.cos(latRad) * Math.cos(lonRad);
+let y = 0//radius * Math.sin(latRad);
+let z = 1.5//radius * Math.cos(latRad) * Math.sin(lonRad);
+
+let camX = 0;
+let camY = 0;
+let camZ = 0;
+
+let dirX = 0;
+let dirZ = 0;
+let dirY = 0;
+
+let velX = 0;
+let velZ = 0;
+let velY = 0;
+
+
+let animating = false;
 
 let scene;
 let camera;
@@ -23,86 +34,140 @@ let controls;
 let renderer;
 let sphereCamera;
 
+let highlight_meteor = 1;
+let impactValue = 0.5;
+
 //Geometry that we might want to control
 let clouds;
+let earth;
 
-function init(){
+function init()
+{
+  load_dataset();
+}
 
-    if (!Detector.webgl) {
-		Detector.addGetWebGLMessage(webglEl);
-		return;
+function changeIndex()
+{
+  highlight_meteor += 1;
+  setNewHighlight(meteor_data[highlight_meteor].reclat, 
+    meteor_data[highlight_meteor].reclong)
+  console.log(meteor_data[highlight_meteor].reclat);
+  console.log(meteor_data[highlight_meteor].reclong)
+}
+
+function setNewHighlight(latitude, longitude)
+{
+  let latRad = latitude * (Math.PI / 180);
+  let lonRad = -longitude * (Math.PI / 180);
+  camX = radius * Math.cos(latRad) * Math.cos(lonRad);
+  camY = radius * Math.sin(latRad);
+  camZ = radius * Math.cos(latRad) * Math.sin(lonRad);
+
+  runTweenCam();
+
+  animating = true;
+}
+
+function scaleValue(value, from, to) {
+	var scale = (to[1] - to[0]) / (from[1] - from[0]);
+	var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
+	return (capped * scale + to[0]);
+}
+
+function init_graphics()
+{
+  setNewHighlight(meteor_data[highlight_meteor].reclat, 
+                  meteor_data[highlight_meteor].reclong)
+
+  if (!Detector.webgl) 
+  {
+	  Detector.addGetWebGLMessage(webglEl);
+	  return;
 	}
 
-    scene = new THREE.Scene();
-    scene.fog = new THREE.Fog( 0xcce0ff, 0, 5);
-    renderer = new THREE.WebGLRenderer();
-    renderer.setSize(width, height);
-    scene.background = loadSkybox();
-
-
-    setCameras()
-    addLights();
-    createSphereGeometry();
-
+  scene = new THREE.Scene();
+  scene.fog = new THREE.Fog( 0xcce0ff, 0, 5);
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize(width, height);
+  scene.background = loadSkybox();
+  setCameras()
+  addLights();
+  createSphereGeometry();
 	//const axesHelper = new THREE.AxesHelper( 5 );
 	//scene.add( axesHelper );
+  webglEl.appendChild(renderer.domElement);
+  runTween();
+  render();
 
-    webglEl.appendChild(renderer.domElement);
-
-    runTween();
-
-    render();
 }
 
 function setCameras()
 {
-    camera = new THREE.PerspectiveCamera(45, width / height, 0.01, 1000);
-    camera.position.z = 1.5;
-    controls = new THREE.TrackballControls(camera);
-    sphereCamera = new THREE.CubeCamera(1,1000,500);
-    sphereCamera.position.set(0,1,0);
+  camera = new THREE.PerspectiveCamera(45, width / height, 0.01, 1000);
+  camera.position.z = 1.5;
+  controls = new THREE.TrackballControls(camera);
+  sphereCamera = new THREE.CubeCamera(1,1000,500);
+  sphereCamera.position.set(0,1,0);
 	scene.add(sphereCamera);
 }
 
 function createSphereGeometry()
 {
-	scene.add(loadEarth(radius, sphereCamera, new THREE.Vector3().set(x,y,z)));
-    clouds = createClouds(radius, 64)
-    scene.add(clouds);
+  earth = loadEarth(radius, sphereCamera, new THREE.Vector3().set(camX,camY,camZ))
+	scene.add(earth);
+  clouds = createClouds(radius, 64)
+  scene.add(clouds);
 }
-
 
 function addLights()
 {
-    scene.add(new THREE.AmbientLight(0x333333));
-    var light = new THREE.DirectionalLight(0xffffff, 2);
+  scene.add(new THREE.AmbientLight(0x333333));
+  var light = new THREE.DirectionalLight(0xffffff, 2);
 	light.position.set(5,3,5);
 	scene.add(light);
 }
 
 function render()
 {
-    controls.update();
-    clouds.rotation.y += 0.0001;
+  if(animating)
+  {
+    var camDistance = camera.position.length();
+    camera.position.copy({x, y, z}).normalize().multiplyScalar(camDistance);
+  }
+  controls.update();
+  //earth.rotation.y = Math.atan2( ( camera.position.x - x ), ( camera.position.z - z ) )
+  //camera.lookAt(x,y,z)
+  //console.log(camera.rotation)
+  clouds.rotation.y += 0.0001;
 	TWEEN.update();		
 	renderer.render(scene, camera);
 	requestAnimationFrame(render);
 }
 
-function runTween() {
-    var tween = new TWEEN.Tween({value: 0})
-      .to({ value: 1 }, 5000)
-      //.easing(TWEEN.Easing.Quintic.Out)
-      .onUpdate(val => {
-        if (materialShader) materialShader.uniforms.impactRatio.value = val.value;
-      })
-      .onComplete((val) => {
-        if (materialShader) materialShader.uniforms.impactPosition.value.set(
-          x,
-          y,
-         z
-        );
-        runTween();
-      });
-    tween.start();
-  }
+function runTween() 
+{
+  var tween = new TWEEN.Tween({value: 0})
+    .to({ value: 1 }, 5000)
+    //.easing(TWEEN.Easing.Quintic.Out)
+    .onUpdate(val => {
+      if (materialShader) materialShader.uniforms.impactRatio.value = val.value;
+      //console.log(val.value)
+    })
+    .onComplete((val) => {
+      if (materialShader) materialShader.uniforms.impactPosition.value.set(
+        camX,
+        camY,
+       camZ
+      );
+      runTween();
+    });
+  tween.start();
+}
+
+function runTweenCam()
+{
+  tween2 = new TWEEN.Tween({x, y, z}).to({x: camX, y: camY, z: camZ}, 3000)
+  .onUpdate(val=>{x = val.x, y= val.y, z=val.z})
+  .onComplete((val)=>{animating=false});
+  tween2.start();
+}

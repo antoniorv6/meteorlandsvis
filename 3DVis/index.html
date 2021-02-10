@@ -4,6 +4,8 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>WebGL Earth</title>
+	<link href='https://fonts.googleapis.com/css?family=Exo+2:400,900italic,900,800italic,800,700italic,700,600italic,600,500italic,500,400italic,300italic,300,200italic,200,100italic,100' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/styles.css">
 	<style>
 		body { margin: 0; overflow: hidden; background-color: #000; }
 		.tm  { position: absolute; top: 10px; right: 10px; }
@@ -12,20 +14,34 @@
     </style>
 </head>
 <body>
+	
+	<div class="futurepanel">
+		<div class="futurepanel__header">
+		  <h1 class="futurepanel__title">Panel de navegación</h1>
+		</div>
+		<div class="futurepanel__body">
+			<button class="futurebutton" onclick="changeIndex()">Next spot</button>
+		</div>
+		<div class="futurepanel__footer">
+		  <div>#0002134678 TFFC:3 ///////////// </div>
+		</div>
+	</div>
+
 	<div id="webgl">
 	</div>
-	
+
 	<!--Libraries-->
 	<script src="vendor/three.min.js"></script>
     <script src="vendor/Detector.js"></script>	
 	<script src="vendor/TrackballControls.js"></script>
 	<script src="vendor/Tween.min.js"></script>
 	
-	
 	<!--Main code-->
+	<script src="js/dataLoad.js"></script>
 	<script src="js/texturehandler.js"></script>
 	<script src="js/geomhandler.js"></script>
 	<script src="js/entrypoint.js"></script>
 	<script>init()</script> 
+
 </body>
 </html>
