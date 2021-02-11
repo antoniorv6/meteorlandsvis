@@ -1,4 +1,4 @@
-let basicSnippet = `<div class="futurepanel">
+let basicSnippet = `<div class="futurepanel" style="top: 350px">
 <div class="futurepanel__header">
   <h1 class="futurepanel__title">Tipos de meteoritos</h1>
 </div>
@@ -25,7 +25,7 @@ let meteorInfoHTML = `<div class="futurepanel" style="right: 20px;">
 let htmlTypes = undefined;
 
 let uiElement = document.getElementById("UI")
-let paginationElements = 22
+let paginationElements = 15
 let currentPageTypes = 0
 let currentPageMeteors = 0
 let typeofMeteors = 0
@@ -74,7 +74,7 @@ function selectType(id)
 
 function setMeteorsHTML()
 {
-    let htmlToShow = `<div class="futurepanel">
+    let htmlToShow = `<div class="futurepanel" style="top: 350px">
     <div class="futurepanel__header">
       <h1 class="futurepanel__title">Meteoritos de clase ${typeofMeteors}</h1>
     </div>
@@ -108,6 +108,19 @@ function setMeteorInfo(idToShow)
 {
     setMeteorsHTML();
     console.log(meteors_shown[idToShow])
+    let mass = meteors_shown[idToShow].mass / 1000;
+
+    mass = mass.toFixed(2);
+
+    let type = "futuremetric__value--optimal";
+    let typemsg = "Low"
+    
+    if(mass > 2)
+    {
+        type = "futuremetric__value--warning";
+        typemsg = "Med"
+    }
+
     uiElement.innerHTML += `<div class="futurepanel" style="right: 10px;">
     <div class="futurepanel__header">
       <h1 class="futurepanel__title">${meteors_shown[idToShow].name}</h1>
@@ -119,11 +132,11 @@ function setMeteorInfo(idToShow)
     <p>${meteors_shown[idToShow].year}</p>
     <h2 class="futurepanel__title">Masa</h2>
     <div class="futuremetric futuremetric--circle">
-        <div class="futuremetric__value">${meteors_shown[idToShow].mass}</div>
-        <div class="futuremetric__label">ton</div>
+        <div class="futuremetric__value">${mass}</div>
+        <div class="futuremetric__label">kg</div>
     </div>
     <div class="futuremetric futuremetric--circle">
-        <div class="futuremetric__value futuremetric__value--alert">Alto</div>
+        <div class="futuremetric__value ${type}">${typemsg}</div>
         <div class="futuremetric__label">impacto</div>
     </div>
     </div>

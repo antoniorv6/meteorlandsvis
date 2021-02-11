@@ -1,3 +1,5 @@
+let material = undefined;
+
 function loadEarth(radius, envMap, impactVector)
 {
     let geom = new THREE.SphereBufferGeometry(radius, 64, 64);
@@ -7,10 +9,10 @@ function loadEarth(radius, envMap, impactVector)
 
 function get_earth_material(impactVector, envMap)
 {
-  const material = new THREE.MeshPhongMaterial({
+  material = new THREE.MeshPhongMaterial({
       map:         loadTexture('assets/textures/Globe/albedo.jpg'),
-      bumpMap:     loadTexture('assets/textures/Globe/bump.jpg'),
-      bumpScale:   0.02,
+      bumpMap:     loadTexture('assets/textures/Globe/bump.png'),
+      bumpScale:   0.01,
       specularMap: loadTexture('assets/textures/Globe/specular.png'),
       specular:    new THREE.Color('grey'),
       shininess:   10,
@@ -59,4 +61,9 @@ function createClouds(radius, segments)
           transparent: true
       })
   );		
+}
+
+function setNewEarthTexture(texture)
+{
+  material.map = loadTexture(texture);
 }

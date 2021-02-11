@@ -37,9 +37,15 @@ let sphereCamera;
 let highlight_meteor = 1;
 let impactValue = 0.5;
 
+let rotationMov = true;
+
+let highlighter = undefined
+
 //Geometry that we might want to control
 let clouds;
 let earth;
+
+let spots = [];
 
 function init()
 {
@@ -52,6 +58,42 @@ function changeIndex(id)
   setNewHighlight(meteors_shown[highlight_meteor].reclat, 
     meteors_shown[highlight_meteor].reclong)
   setMeteorInfo(id);
+  if(rotationMov)
+  {
+    runTween();
+    rotationMov = false;
+  }
+}
+
+function addMeteoritesAsSpots()
+{
+  //let particles = new THREE.Geometry();
+  //let pMaterial = new THREE.ParticleBasicMaterial({
+  //  map:loadTexture('assets/textures/Globe/particle.png'),
+  //  color: 0xFFFFFF,
+  //  size: 0.1
+  //});
+  //for(let i = 0; i < 5000; i++)
+  //{
+  //  let particle = setObjectToLatLon(meteor_data[i].reclat, meteor_data[i].reclong);
+  //  particles.vertices.push(particle);
+  //}
+  //var particleSystem = new THREE.ParticleSystem(
+  //  particles,
+  //  pMaterial);
+ // 
+  //scene.add(particleSystem);
+}
+
+function setObjectToLatLon(latitude, longitude)
+{
+  let latRad = latitude * (Math.PI / 180);
+  let lonRad = -longitude * (Math.PI / 180);
+  let X = radius * Math.cos(latRad) * Math.cos(lonRad);
+  let Y = radius * Math.sin(latRad);
+  let Z = radius * Math.cos(latRad) * Math.sin(lonRad);
+
+  return new THREE.Vector3(X,Y,Z);
 }
 
 function setNewHighlight(latitude, longitude)
@@ -65,6 +107,8 @@ function setNewHighlight(latitude, longitude)
   x = camera.position.x;
   y = camera.position.y;
   z = camera.position.z;
+
+  highlighter.position.set(camX, camY, camZ);
 
   runTweenCam();
 
@@ -94,13 +138,20 @@ function init_graphics()
   addLights();
   createSphereGeometry();
 
+  const geometry = new THREE.SphereGeometry( 0.004, 32, 32 );
+  const material = new THREE.MeshBasicMaterial( {color: 0xde2900} );
+  highlighter    = new THREE.Mesh( geometry, material );
+
+  scene.add(highlighter);
+
   setNewHighlight(meteor_data[highlight_meteor].reclat, 
     meteor_data[highlight_meteor].reclong)
+  
+  highlighter.position.set(0, 0, 0);
 
 	//const axesHelper = new THREE.AxesHelper( 5 );
 	//scene.add( axesHelper );
   webglEl.appendChild(renderer.domElement);
-  runTween();
   render();
 
 }
@@ -138,11 +189,16 @@ function render()
     var camDistance = camera.position.length();
     camera.position.copy({x, y, z}).normalize().multiplyScalar(camDistance);
   }
+  if(rotationMov)
+  {
+    clouds.rotation.y += 0.0005;
+  }
+  else
+    clouds.rotation.y += 0.0001
   controls.update();
   //earth.rotation.y = Math.atan2( ( camera.position.x - x ), ( camera.position.z - z ) )
   //camera.lookAt(x,y,z)
   //console.log(camera.rotation)
-  clouds.rotation.y += 0.0001;
 	TWEEN.update();		
 	renderer.render(scene, camera);
 	requestAnimationFrame(render);

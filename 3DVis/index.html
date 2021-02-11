@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>WebGL Earth</title>
-	<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+	<title>Meteorite Landings</title>
+	<script src="https://kit.fontawesome.com/f27f3fd016.js" crossorigin="anonymous"></script>
 	<link href='https://fonts.googleapis.com/css?family=Exo+2:400,900italic,900,800italic,800,700italic,700,600italic,600,500italic,500,400italic,300italic,300,200italic,200,100italic,100' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="css/styles.css">
 	<style>
@@ -15,8 +15,22 @@
     </style>
 </head>
 <body>
-	
 	<div id="UI">
+	</div>
+
+	<div>
+		<div class="futurepanel">
+		<div class="futurepanel__header">
+			<h1 class="futurepanel__title">Panel de control</h1>
+			</div>
+			<div class="futurepanel__body">
+				<p>Textura del globo</p>
+				<button class="futurebutton" onclick="setNewEarthTexture('assets/textures/Globe/albedo.jpg')">Mapa de satélite</button><br>
+				<button class="futurebutton" onclick="setNewEarthTexture('assets/textures/Globe/heatmap.jpg')">Mapa de calor</button>
+				<p>Visualizaciones alternativas</p>
+				<button class="futurebutton" onclick="addMeteoritesAsSpots()">Visualización completa</button><br>
+			</div>
+		</div>
 	</div>
 
 	<div id="webgl">
