@@ -25,7 +25,7 @@ let meteorInfoHTML = `<div class="futurepanel" style="right: 20px;">
 let htmlTypes = undefined;
 
 let uiElement = document.getElementById("UI")
-let paginationElements = 15
+let paginationElements = Math.min(Math.floor((window.innerHeight / 29) - 16), 15)
 let currentPageTypes = 0
 let currentPageMeteors = 0
 let typeofMeteors = 0

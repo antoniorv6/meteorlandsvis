@@ -49,7 +49,22 @@ let spots = [];
 
 function init()
 {
+  window.addEventListener("resize", () => {
+    resize(); // your function?
+    });
   load_dataset();
+}
+
+function resize() {
+
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  paginationElements = Math.min(Math.floor((window.innerHeight / 29) - 16), 15)
+  console.log(paginationElements);
+  initUI();
+
+  //render();
 }
 
 function changeIndex(id)
