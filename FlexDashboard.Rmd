@@ -16,7 +16,7 @@ library(rbokeh)
 
 
 ```{r global, include=FALSE}
-meteor <- read.csv("meteorite-landings.csv", sep = ",", header = TRUE)
+meteor <- read.csv("Data/meteorite-landings.csv", sep = ",", header = TRUE)
 
 # limpiamos
 meteor.val <- meteor[!is.na(meteor$year) & !is.na(meteor$mass),]
