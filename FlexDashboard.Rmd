@@ -1,0 +1,117 @@
+---
+title: "Meteorite Landings"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: flatly
+runtime: shiny
+---
+
+```{r, include=FALSE}
+library(reshape2)
+library(dplyr)
+library(xts)
+library(dygraphs)
+library(rbokeh)
+```
+
+
+```{r global, include=FALSE}
+meteor <- read.csv("meteorite-landings.csv", sep = ",", header = TRUE)
+
+# limpiamos
+meteor.val <- meteor[!is.na(meteor$year) & !is.na(meteor$mass),]
+
+# obtenemos los cuartiles
+meteor.type.range <- c(quantile(meteor.val$mass[is.na(meteor.val$mass) == FALSE], 0.25),
+                       quantile(meteor.val$mass[is.na(meteor.val$mass) == FALSE], 0.50),
+                       quantile(meteor.val$mass[is.na(meteor.val$mass) == FALSE], 0.75))
+
+# clasificamos por tamaño según los cuartiles
+meteor.val$size <- ifelse(meteor.val$mass < meteor.type.range[1], "pequeño",
+                      ifelse(meteor.val$mass < meteor.type.range[2], "mediano",
+                             ifelse(meteor.val$mass < meteor.type.range[3], "grande",
+                                    "muy grande"
+                             )
+                      )
+               )
+
+# Agrupamos la informacion para crear el xts
+meteor.df <- meteor.val[,c("year","size")]
+meteor.df.group <- meteor.df %>% group_by(year, size, .add = TRUE)
+# meteor.df.group %>% group_vars()
+meteor.df.count <- meteor.df.group %>% summarise(n = n())
+# meteor.df.count %>% group_vars()
+meteor.df.pivot <- meteor.df.count %>% dcast(year ~ size, fill=0)
+
+meteor.xts <- xts(x = meteor.df.pivot[,-1], order.by = as.Date(paste(meteor.df.pivot$year,"-01-01", sep="")))
+```
+
+Analysis {.storyboard}
+=========================================
+
+### Frame 1
+
+```{r}
+```
+
+### Frame 2
+
+```{r}
+```
+
+Details
+=========================================
+
+Column {.sidebar}
+-------------------------------------
+    
+### Chart 1
+    
+Seleccionamos los parámetros
+
+```{r}
+selectInput("n_breaks", label = "Recclass:",
+            choices = unique(meteor.val$recclass), selected = 20)
+
+dateRangeInput("daterange1", "Rango de fechas:",
+                 start = "1975-01-01",
+                 end   = "2013-12-31")
+
+output$dateRangeText  <- renderText({
+  paste("Meteoritos desde", 
+    paste(as.character(input$daterange1), collapse = " hasta ")
+  )
+})
+```
+
+Column
+-------------------------------------
+   
+### Chart 2
+
+```{r}
+#output$startdate <- renderText({
+#  as.character(input$daterange1[1])
+#})
+#
+#output$enddate <- renderText({
+#  as.character(input$daterange1[2])
+#})
+
+#renderTable({
+#  meteor.xts.graph <- meteor.xts[index(meteor.xts) >= as.Date(input$daterange1[1]) & index(meteor.xts) < #as.Date(input$daterange1[2])]
+#  print(meteor.xts.graph)
+#})
+
+renderPlot({
+  meteor.xts.graph <- meteor.xts[index(meteor.xts) >= as.Date(input$daterange1[1]) & index(meteor.xts) < as.Date(input$daterange1[2])]
+  dygraph(meteor.xts.graph, main = verbatimTextOutput("dateRangeText"))
+})
+
+```
+
+### Chart 3
+    
+```{r}
+```
+
