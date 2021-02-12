@@ -10,7 +10,7 @@ library(shinythemes)
 # Define UI for app that draws a histogram ----
 ui <- fluidPage( theme = shinytheme("flatly"),
   # Css un poco guarro para  ajustar los parámetros por defecto de Bootstrap que quedan feos
-  tags$style(".container-fluid{padding: 0 !important;} 
+  tags$style("body{background-color: #ffffff !important} .container-fluid{padding: 0 !important;} 
              .navbar-header{margin-left: 1em !important} 
              .navbar{margin:0 !important}"),
   # App title ----
