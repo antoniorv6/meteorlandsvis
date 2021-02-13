@@ -100,6 +100,8 @@ function setMeteorsHTML()
 
     htmlToShow += `<button class="futurebutton--alert" onclick="initUI()">Volver</button></div></div>`
 
+    addMeteoritesAsSpots();
+
     uiElement.innerHTML = htmlToShow;
 }
 
@@ -115,10 +117,15 @@ function setMeteorInfo(idToShow)
     let type = "futuremetric__value--optimal";
     let typemsg = "Low"
     
-    if(mass > 2)
+    if(mass > 10)
     {
         type = "futuremetric__value--warning";
         typemsg = "Med"
+    }
+    if(mass > 50)
+    {
+        type = "futuremetric__value--alert";
+        typemsg = "High"
     }
 
     uiElement.innerHTML += `<div class="futurepanel" style="right: 10px;">
