@@ -39,7 +39,9 @@ let impactValue = 0.5;
 
 let rotationMov = true;
 
-let highlighter = undefined
+let highlighter = undefined;
+let highlightedspot = undefined;
+let projector;
 
 //Geometry that we might want to control
 let clouds;
@@ -47,12 +49,39 @@ let earth;
 
 let spots = [];
 
+let mouse = new THREE.Vector2();
+let INTERSECTED;
+
 function init()
 {
   window.addEventListener("resize", () => {
     resize(); // your function?
     });
+  document.addEventListener('mousemove', updateMouse, false);
+  document.addEventListener('click', checkHighlightSelection, false);
+  
   load_dataset();
+}
+
+function updateMouse(event)
+{
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+}
+
+function checkHighlightSelection(event)
+{ 
+  if(highlightedspot!=undefined)
+  {
+    for(let i = 0; i < spots.length ; i++)
+    {
+      if(spots[i].uuid == highlightedspot.uuid)
+      {
+        changeIndex(i);
+        break;
+      }
+    }
+  }
 }
 
 function resize() {
@@ -82,22 +111,36 @@ function changeIndex(id)
 
 function addMeteoritesAsSpots()
 {
-  //let particles = new THREE.Geometry();
-  //let pMaterial = new THREE.ParticleBasicMaterial({
-  //  map:loadTexture('assets/textures/Globe/particle.png'),
-  //  color: 0xFFFFFF,
-  //  size: 0.1
-  //});
-  //for(let i = 0; i < 5000; i++)
-  //{
-  //  let particle = setObjectToLatLon(meteor_data[i].reclat, meteor_data[i].reclong);
-  //  particles.vertices.push(particle);
-  //}
-  //var particleSystem = new THREE.ParticleSystem(
-  //  particles,
-  //  pMaterial);
- // 
-  //scene.add(particleSystem);
+  if(spots.length != 0)
+  {
+    spots.forEach(element=>{
+      scene.remove(element);
+    });
+    spots = []
+  }
+  for(let i = 0; i < meteors_shown.length; i++)
+  {
+    let mass = meteors_shown[i].mass / 1000;
+    const position = setObjectToLatLon(meteors_shown[i].reclat, meteors_shown[i].reclong)
+    const geometry = new THREE.SphereGeometry( scaleValue(Math.abs(Math.log2(mass)), [0, 20], [0.001, 0.03]), 4, 4);
+    let material = undefined;
+    if(mass > 10)
+    {
+      material = new THREE.MeshBasicMaterial( {color: 0xf09c1f} );
+    }
+    if(mass > 50)
+    {
+      material = new THREE.MeshBasicMaterial( {color: 0xde2900} );
+    }
+    if(mass < 10)
+    {
+      material = new THREE.MeshBasicMaterial( {color: 0x1f50f0} )
+    }
+    let mesh       = new THREE.Mesh( geometry, material );
+    mesh.position.set(position.x, position.y, position.z);
+    spots.push(mesh)
+    scene.add(mesh);
+  }
 }
 
 function setObjectToLatLon(latitude, longitude)
@@ -144,6 +187,7 @@ function init_graphics()
 	  return;
 	}
 
+  projector = new THREE.Raycaster();
   scene = new THREE.Scene();
   scene.fog = new THREE.Fog( 0xcce0ff, 0, 5);
   renderer = new THREE.WebGLRenderer();
@@ -154,7 +198,7 @@ function init_graphics()
   createSphereGeometry();
 
   const geometry = new THREE.SphereGeometry( 0.004, 32, 32 );
-  const material = new THREE.MeshBasicMaterial( {color: 0xde2900} );
+  const material = new THREE.MeshBasicMaterial( {color: 0x1ff065} );
   highlighter    = new THREE.Mesh( geometry, material );
 
   scene.add(highlighter);
@@ -211,12 +255,32 @@ function render()
   else
     clouds.rotation.y += 0.0001
   controls.update();
+  checkSelection();
   //earth.rotation.y = Math.atan2( ( camera.position.x - x ), ( camera.position.z - z ) )
   //camera.lookAt(x,y,z)
   //console.log(camera.rotation)
 	TWEEN.update();		
 	renderer.render(scene, camera);
 	requestAnimationFrame(render);
+}
+
+function checkSelection()
+{
+  projector.setFromCamera(mouse, camera);
+  var intersects = projector.intersectObjects(spots);
+  
+  if(intersects.length > 0)
+  {
+    if(highlightedspot != undefined)
+      highlightedspot.material.color.setHex(  0xde2900 );
+    highlightedspot = intersects[0].object;
+    highlightedspot.material.color.setHex( 0xffff00 );
+  }
+  else if(highlightedspot != undefined)
+  {
+    highlightedspot.material.color.setHex(  0xde2900 );
+    highlightedspot = undefined;
+  }
 }
 
 function runTween() 
