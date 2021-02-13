@@ -90,7 +90,6 @@ function resize() {
   camera.updateProjectionMatrix();
   renderer.setSize( window.innerWidth, window.innerHeight );
   paginationElements = Math.min(Math.floor((window.innerHeight / 29) - 16), 15)
-  console.log(paginationElements);
   initUI();
 
   //render();
@@ -122,20 +121,8 @@ function addMeteoritesAsSpots()
   {
     let mass = meteors_shown[i].mass / 1000;
     const position = setObjectToLatLon(meteors_shown[i].reclat, meteors_shown[i].reclong)
-    const geometry = new THREE.SphereGeometry( scaleValue(Math.abs(Math.log2(mass)), [0, 20], [0.001, 0.03]), 4, 4);
-    let material = undefined;
-    if(mass > 10)
-    {
-      material = new THREE.MeshBasicMaterial( {color: 0xf09c1f} );
-    }
-    if(mass > 50)
-    {
-      material = new THREE.MeshBasicMaterial( {color: 0xde2900} );
-    }
-    if(mass < 10)
-    {
-      material = new THREE.MeshBasicMaterial( {color: 0x1f50f0} )
-    }
+    const geometry = new THREE.SphereGeometry( scaleValue(Math.abs(Math.log2(mass)), [0, 20], [0.001, 0.03]), 10, 10);
+    const material = new THREE.MeshBasicMaterial( {color: 0xfcb103} )
     let mesh       = new THREE.Mesh( geometry, material );
     mesh.position.set(position.x, position.y, position.z);
     spots.push(mesh)
@@ -272,13 +259,13 @@ function checkSelection()
   if(intersects.length > 0)
   {
     if(highlightedspot != undefined)
-      highlightedspot.material.color.setHex(  0xde2900 );
+      highlightedspot.material.color.setHex(  0xfcb103 );
     highlightedspot = intersects[0].object;
-    highlightedspot.material.color.setHex( 0xffff00 );
+    highlightedspot.material.color.setHex( 0x33db00 );
   }
   else if(highlightedspot != undefined)
   {
-    highlightedspot.material.color.setHex(  0xde2900 );
+    highlightedspot.material.color.setHex(  0xfcb103 );
     highlightedspot = undefined;
   }
 }
