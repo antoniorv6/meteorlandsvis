@@ -27,7 +27,7 @@ ui <- fluidPage( theme = shinytheme("flatly"),
   tags$link(rel = "stylesheet", type = "text/css", href = "css/styles.css")),
   # App title ----
   navbarPage("Meteorite Landing Visualization",
-             tabPanel("Summary",
+             tabPanel("Summary", style="margin-top:1em",
                       sidebarPanel(selectInput("n_breaks", label = "Recclass:",
                                                choices = unique(meteor.val$recclass), selected = 20),
                                    dateRangeInput("daterange1", "Rango de fechas:",
