@@ -1,6 +1,6 @@
 let basicSnippet = `<div class="futurepanel" style="top: 350px">
 <div class="futurepanel__header">
-  <h1 class="futurepanel__title">Tipos de meteoritos</h1>
+  <h1 class="futurepanel__title">Meteor classes</h1>
 </div>
 <div class="futurepanel__body" id="types">
 </div>
@@ -76,7 +76,7 @@ function setMeteorsHTML()
 {
     let htmlToShow = `<div class="futurepanel" style="top: 350px">
     <div class="futurepanel__header">
-      <h1 class="futurepanel__title">Meteoritos de clase ${typeofMeteors}</h1>
+      <h1 class="futurepanel__title">${typeofMeteors} meteors</h1>
     </div>
     <div class="futurepanel__body">`
     // Show the meteors!!
@@ -133,11 +133,11 @@ function setMeteorInfo(idToShow)
       <h1 class="futurepanel__title">${meteors_shown[idToShow].name}</h1>
     </div>
     <div class="futurepanel__body">
-    <h2 class="futurepanel__title">Tipo</h2>
+    <h2 class="futurepanel__title">Class</h2>
     <p>${meteors_shown[idToShow].recclass}</p>
-    <h2 class="futurepanel__title">Año de descubrimiento</h2>
+    <h2 class="futurepanel__title">Year found</h2>
     <p>${meteors_shown[idToShow].year}</p>
-    <h2 class="futurepanel__title">Masa</h2>
+    <h2 class="futurepanel__title">Data</h2>
     <div class="futuremetric futuremetric--circle">
         <div class="futuremetric__value">${mass}</div>
         <div class="futuremetric__label">kg</div>
