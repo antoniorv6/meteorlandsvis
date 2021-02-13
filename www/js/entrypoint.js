@@ -55,7 +55,7 @@ let INTERSECTED;
 function init()
 {
   window.addEventListener("resize", () => {
-    resize(); // your function?
+    resize();
     });
   document.addEventListener('mousemove', updateMouse, false);
   document.addEventListener('click', checkHighlightSelection, false);
@@ -66,7 +66,7 @@ function init()
 function updateMouse(event)
 {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1.1;
 }
 
 function checkHighlightSelection(event)
