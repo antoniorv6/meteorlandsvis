@@ -35,9 +35,43 @@ ui <- fluidPage( theme = shinytheme("flatly"),
                                                   end   = "2013-12-31")),
                       mainPanel(dygraphOutput(outputId = "distPlot")
                       )),
-             tabPanel("Typology"
-                      
-                      ),
+             tabPanel("Typology", style="height = 100%",
+                      column(9, style = "background-color: none;",
+                             h3("Mass by class"),
+                             fluidRow(plotlyOutput("classBox")),
+                             column(6,
+                             h3("Class of meteorites found"),
+                            fluidRow(plotlyOutput("percent"))),
+                            column(6, div(img(src="./chon.png", height="80%", width="80%", align="center")),
+                            h4("Chondryte meteor, from Sahara desert")
+                            )
+                          ),
+                      column(3,
+                             h3("Classification"),
+                             h4("Ordinary chondrites"),
+                             p("They are classfied by iron cuantity. His origin is from little asteroids. x is the texture number, indicates the evololution of father's body."),
+                             tags$ul(
+                               tags$li("Lx : Low iron"), 
+                               tags$li("LLx: Very low iron"), 
+                               tags$li("Hx: High iron")
+                             ),
+                             h4("Carbonaceus chondrites"),
+                             p("It contains up to 5% of its weight in carbon. Their main metals are olivine and serpentine, along with Fe and Ni. They can contain up to 20% water and up to 7% organic compounds. They come from asteroids and perhaps comets.")
+                             ,tags$ul(
+                               tags$li("CM: They contain 15% less chondrules"), 
+                               tags$li("CO: They contain 35-40% chondrules")
+                             ),
+                             h4("Metallic"),
+                             p("They generally come from large asteroids. They are characterized by being composed of more than 90% metal.")
+                             ,tags$ul(
+                               tags$li("IIAB: Medium to coarse octahedrite. They present troilite and graphite nodules, with a rare presence of silicates.")
+                             ),
+                             h4("Achondrites"),
+                             p("Achondrites are igneous rocks, like volcanic rocks. Its initial content has been completely transformed due to high heat. They are characterized by having little metal (less than 1%) and are classified according to their origin and calcium level.")
+                             ,tags$ul(
+                               tags$li("Ureilite: They are the achondrites poor in calcium. They are the rarest meteorites of all, rich in graphite, clinobronzite, olivines, diamonds and silicates.")
+                             )
+                      )),
              tabPanel("Maps",
                       column(2, class = "futurepanel",style="z-index:10",
                         fluidRow(style="padding:1em",
@@ -145,6 +179,48 @@ server <- function(input, output) {
       setView(long_center,lat_center,3) %>%
       addLegend(pal = pal3, values = ~ mass, opacity = 1, title = "Masa(kg)")
   })
+  
+  
+  # Typology page
+  
+  ## box plt
+  datos_by_class <- meteor %>% group_by(recclass)  %>%
+    count(recclass, sort = TRUE)
+  
+  datos_by_class <- datos_by_class[1:15,]
+  datos_by_class <- transform(datos_by_class, recclass = as.character(recclass))
+  index <- which(meteor$recclass %in% datos_by_class[,1])
+  
+  datclass <- meteor[index,]
+  
+  g <-ggplot(datclass, aes(x=recclass, y= log(mass), fill=recclass)) +
+    geom_boxplot() +
+    xlab("Class") + ylab("Log(Mass) Kg") +
+    scale_fill_manual(values=c('#8b4513','#9f6934','#5421d3','#002b73','#3c2ac5','#0c203d','#002861','#a9a9a9','#6c0de0','#232eb6','#00244f','#092c69','#002e84','#0030a6','#ffc0cb'))
+  
+  output$classBox <-renderPlotly({ggplotly(g)})
+  
+  ## pie chart
+  datos_by_class1 <- meteor  %>% group_by(recclass)  %>%
+    count(recclass, sort = TRUE)
+  
+  other <- list("recclass"="Other", "n"=sum(datos_by_class1[-c(1:15), 2]))
+  datos_by_class2 <- rbind(datos_by_class1[1:15,] , other)
+
+  datos_by_class2 <- datos_by_class2 %>% 
+    arrange(desc(recclass)) %>%
+    mutate(prop = n / sum(datos_by_class2$n) *100) %>%
+    mutate(ypos = cumsum(prop)- 0.5*prop ) 
+  
+  datos_by_class2  <- datos_by_class2[order(datos_by_class2$prop),] 
+
+  
+  p <- plot_ly(datos_by_class2, labels = ~recclass, values = ~n, type = 'pie',textposition = 'outside',textinfo = 'label+percent', marker = list(colors = c( '#a9a9a9','#ffc0cb','#9f6934','#4f30bf','#7523d6','#8b4513','#622ccb','#2e33a4','#203396','#143187','#0c2f78','#092c69','#0c2959','#10254a','#E7E7D0','#5421d3'))) %>%
+    layout(
+           xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+           yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+  
+  output$percent <-renderPlotly({ggplotly(p)})
 }
 
 shinyApp(ui = ui, server = server)
