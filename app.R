@@ -46,7 +46,7 @@ ui <- dashboardPage(
     theme = shinytheme("flatly"),
     tags$head(
       # Css para  ajustar los parámetros por defecto de Bootstrap
-      tags$style("body{background-color: #ffffff !important} .container-fluid{padding: 0 !important;} 
+      tags$style("body{background-color: #ffffff !important} .content{padding:0 !important} .container-fluid{padding: 0 !important;} 
                  .navbar-header{margin-left: 1em !important} 
                  .navbar{margin:0 !important}
                  .dygraph-legend {left: 70px !important; background-color: transparent !important;} 
